@@ -384,7 +384,7 @@ class Aoe_Static_Model_Observer
         foreach ($tags as $tag) {
             //catalog_product_100 or catalog_category_186
             $tag_fields = explode('_', $tag);
-            if (count($tag_fields) == 3) {
+            if (count($tag_fields) == 3 && !empty($tag_fields[2])) {
                 if (in_array($tag_fields[1], array('product', 'category', 'page', 'block'))) {
                     $purgetags[] = $cacheControl->normalizeTag(array($tag_fields[1], $tag_fields[2]), false);
                 }
