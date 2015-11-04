@@ -19,6 +19,7 @@ class Aoe_Static_CallController extends Mage_Core_Controller_Front_Action
      * render requested blocks
      *
      * @param array|string $blocks
+     *
      * @return array
      */
     protected function _renderBlocks($blocks)
@@ -40,6 +41,29 @@ class Aoe_Static_CallController extends Mage_Core_Controller_Front_Action
         }
 
         return $result;
+    }
+
+    /**
+     * Fixes hard encoded referrer links in blocks
+     *
+     * Links within blocks can contain a referrer link.
+     * If this block gets rendered via this ajax call
+     * these referrer links will point to the current ajax call url.
+     * Therefore all encoded "wrong" referrer links need to be corrected.
+     *
+     * @param array $blocks
+     *
+     * @return void
+     */
+    public function _fixReferrerLinks(&$blocks)
+    {
+        $referrer = $this->_getRefererUrl();
+        $currentUrl = Mage::helper('core/url')->getEncodedUrl();
+        if (!empty($referrer)) {
+            foreach ($blocks as &$block) {
+                $block = str_replace($currentUrl, Mage::helper('core/url')->urlEncode($referrer), $block);
+            }
+        }
     }
 
     /**
@@ -68,6 +92,8 @@ class Aoe_Static_CallController extends Mage_Core_Controller_Front_Action
         $requestedBlockNames = $this->getRequest()->getParam('getBlocks');
         if ($requestedBlockNames) {
             $response['blocks'] = $this->_renderBlocks($requestedBlockNames);
+
+            $this->_fixReferrerLinks($response['blocks']);
         }
 
         // get messages
