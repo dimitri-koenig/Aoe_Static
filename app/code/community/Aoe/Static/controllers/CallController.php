@@ -129,6 +129,8 @@ class Aoe_Static_CallController extends Mage_Core_Controller_Front_Action
         $requestedBlockNames = $this->getRequest()->getParam('getBlocks');
         if ($requestedBlockNames) {
             $response['blocks'] = $this->_renderBlocks($requestedBlockNames);
+
+            $this->_fixReferrerLinks($response['blocks']);
         }
 
         // strip SID from responses
