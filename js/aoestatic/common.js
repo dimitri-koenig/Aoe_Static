@@ -13,7 +13,7 @@ var Aoe_Static = {
     ajaxHomeUrl: null,
     currentProductId: null,
 
-    init: function(ajaxhome_url, fullactionname, storeId, websiteId, currentproductid) {
+    init: function (ajaxhome_url, fullactionname, storeId, websiteId, currentproductid) {
         this.storeId = storeId;
         this.websiteId = websiteId;
         this.fullActionName = fullactionname;
@@ -26,7 +26,7 @@ var Aoe_Static = {
     /**
      * populate page
      */
-    populatePage: function() {
+    populatePage: function () {
         this.replaceCookieContent();
         this.replaceAjaxBlocks();
         if (this.isLoggedIn()) {
@@ -41,16 +41,16 @@ var Aoe_Static = {
     /**
      * Replace cookie content
      */
-    replaceCookieContent: function() {
+    replaceCookieContent: function () {
         jQuery('body').trigger('aoestatic_beforecookiereplace');
-        jQuery.each(this.getCookieContent(), function(name, value) {
+        jQuery.each(this.getCookieContent(), function (name, value) {
             jQuery('.aoestatic_' + name).text(value);
             // console.log('Replacing ".aoestatic_' + name + '" with "' + value + '"');
         })
         jQuery('body').trigger('aoestatic_aftercookiereplace');
     },
 
-    isLoggedIn: function() {
+    isLoggedIn: function () {
         var cookieValues = this.getCookieContent();
         //return typeof cookieValues['customername'] != 'undefined' && cookieValues['customername'].length;
         return typeof cookieValues['isloggedin'] != 'undefined' && cookieValues['isloggedin'] == 1;
@@ -59,10 +59,10 @@ var Aoe_Static = {
     /**
      * Get info from cookies
      */
-    getCookieContent: function() {
+    getCookieContent: function () {
         // expected format as_[g|w<websiteId>|s<storeId>]
         var values = {};
-        jQuery.each(jQuery.cookie(), function(name, value) {
+        jQuery.each(jQuery.cookie(), function (name, value) {
             if (name.substr(0, 10) == 'aoestatic_') {
                 name = name.substr(10);
                 var parts = name.split('_');
@@ -78,7 +78,7 @@ var Aoe_Static = {
         });
 
         var cookieValues = {};
-        jQuery.each(values, function(name, data) {
+        jQuery.each(values, function (name, data) {
             if (typeof data['s' + Aoe_Static.storeId] != 'undefined') {
                 cookieValues[name] = data['s' + Aoe_Static.storeId];
             } else if (typeof data['w' + Aoe_Static.websiteId] != 'undefined') {
@@ -93,15 +93,15 @@ var Aoe_Static = {
     /**
      * Load block content from server
      */
-    replaceAjaxBlocks: function() {
-        jQuery(document).ready(function($) {
+    replaceAjaxBlocks: function () {
+        jQuery(document).ready(function ($) {
             var data = {
                 getBlocks: {}
             };
 
             // add placeholders
             var counter = 0;
-            $('.as-placeholder').each(function() {
+            $('.as-placeholder').each(function () {
                 var id = $(this).attr('id');
                 if (!id) {
                     // create dynamic id
@@ -126,12 +126,13 @@ var Aoe_Static = {
                 Aoe_Static.ajaxHomeUrl,
                 data,
                 function (response) {
-                    for(var id in response.blocks) {
+                    for (var id in response.blocks) {
                         $('#' + id).html(response.blocks[id]);
                         // try to save in localStorage if allowed (f.e. not allowed in private mode on iOS)
                         try {
                             localStorage.setItem('aoe_static_blocks_' + data.getBlocks[id], response.blocks[id]);
-                        } catch(e) {}
+                        } catch (e) {
+                        }
                     }
 
                     if (response['formKey']) {
