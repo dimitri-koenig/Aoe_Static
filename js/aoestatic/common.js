@@ -94,6 +94,8 @@ var Aoe_Static = {
      * Load block content from server
      */
     replaceAjaxBlocks: function () {
+        var self = this;
+
         jQuery(document).ready(function ($) {
             var data = {
                 getBlocks: {}
