@@ -133,10 +133,36 @@ var Aoe_Static = {
                             localStorage.setItem('aoe_static_blocks_' + data.getBlocks[id], response.blocks[id]);
                         } catch(e) {}
                     }
+
+                    if (response['formKey']) {
+                        self.replaceFormKey(response['formKey']);
+                    }
+
                     jQuery('body').trigger('aoestatic_afterblockreplace', response);
                 },
                 'json'
             );
+        });
+    },
+
+    /**
+     * Replaces formkey in forms and links due to increased necessary security measures
+     */
+    replaceFormKey: function (formKey) {
+        function getNewUrl(oldUrl) {
+            return oldUrl.replace(/\/form_key\/.*\//g, '/form_key/' + formKey + '/');
+        }
+
+        $('a[href*="form_key"]').each(function () {
+            var oldLink = $(this).attr('href');
+            var newLink = getNewUrl(oldLink);
+            $(this).attr('href', newLink);
+        });
+
+        $('form[action*="form_key"]').each(function () {
+            var oldAction = $(this).attr('action');
+            var newAction = getNewUrl(oldAction);
+            $(this).attr('action', newAction);
         });
     }
 };

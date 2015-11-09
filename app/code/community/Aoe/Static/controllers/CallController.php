@@ -78,8 +78,9 @@ class Aoe_Static_CallController extends Mage_Core_Controller_Front_Action
             return $this->_redirect('/');
         }
 
-        $response = array();
-        //$response['sid'] = Mage::getModel('core/session')->getEncryptedSessionId();
+        $response = array(
+            'formKey' => Mage::getSingleton('core/session')->getFormKey()
+        );
 
         if ($currentProductId = $this->getRequest()->getParam('currentProductId')) {
             Mage::getModel('reports/product_index_viewed')
