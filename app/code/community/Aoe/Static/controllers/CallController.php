@@ -100,21 +100,23 @@ class Aoe_Static_CallController extends Mage_Core_Controller_Front_Action
             $this->_fixReferrerLinks($response['blocks']);
         }
 
-        // get messages
-        $messages = array();
-        foreach ($this->_sessions as $sessionStorage) {
-            if (!isset($messages[$sessionStorage])) {
-                $messages[$sessionStorage] = array();
-            }
-            foreach (Mage::getSingleton($sessionStorage)->getMessages(true)->getItems() as $message) {
-                $type = $message->getType();
-                if (!isset($messages[$sessionStorage][$type])) {
-                    $messages[$sessionStorage][$type] = array();
+        if (!Mage::getStoreConfigFlag('dev/aoestatic/ignoreMessages')) {
+            // get messages
+            $messages = array();
+            foreach ($this->_sessions as $sessionStorage) {
+                if (!isset($messages[$sessionStorage])) {
+                    $messages[$sessionStorage] = array();
                 }
-                $messages[$sessionStorage][$type][] = $message->getCode();
+                foreach (Mage::getSingleton($sessionStorage)->getMessages(true)->getItems() as $message) {
+                    $type = $message->getType();
+                    if (!isset($messages[$sessionStorage][$type])) {
+                        $messages[$sessionStorage][$type] = array();
+                    }
+                    $messages[$sessionStorage][$type][] = $message->getCode();
+                }
             }
+            $response['messages'] = $messages;
         }
-        $response['messages'] = $messages;
 
         $this->getResponse()->setBody(Zend_Json::encode($response));
     }
