@@ -101,6 +101,10 @@ var Aoe_Static = {
                 getBlocks: {}
             };
 
+            if (self.currentProductId) {
+                data.currentProductId = self.currentProductId;
+            }
+
             // add placeholders
             var counter = 0;
             $('.as-placeholder').each(function () {
