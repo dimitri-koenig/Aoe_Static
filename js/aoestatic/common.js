@@ -113,7 +113,7 @@ var Aoe_Static = {
                 var rel = $(this).attr('rel');
                 if (rel) {
                     if (localStorage.getItem('aoe_static_blocks_' + rel)) {
-                        $('#' + id).html(localStorage.getItem('aoe_static_blocks_' + rel));
+                        $('#' + id).replaceWith(localStorage.getItem('aoe_static_blocks_' + rel));
                     }
                     data.getBlocks[id] = rel;
                     counter++;
@@ -129,7 +129,7 @@ var Aoe_Static = {
                 data,
                 function (response) {
                     for (var id in response.blocks) {
-                        $('#' + id).html(response.blocks[id]);
+                        $('#' + id).replaceWith(response.blocks[id]);
                         // try to save in localStorage if allowed (f.e. not allowed in private mode on iOS)
                         try {
                             localStorage.setItem('aoe_static_blocks_' + data.getBlocks[id], response.blocks[id]);
