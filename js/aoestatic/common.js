@@ -117,8 +117,8 @@ var Aoe_Static = {
                 $(this).attr('aoe-static-id', id);
                 var rel = $(this).attr('rel');
                 if (rel) {
-                    if (localStorage.getItem('aoe_static_blocks_' + rel)) {
-                        $('[aoe-static-id="' + id + '"]').html(localStorage.getItem('aoe_static_blocks_' + rel));
+                    if (localStorage.getItem('aoe_static_blocks_' + self.storeId + '_' + rel)) {
+                        $('[aoe-static-id="' + id + '"]').html(localStorage.getItem('aoe_static_blocks_' + self.storeId + '_' + rel));
                     }
                     data.getBlocks[id] = rel;
                     counter++;
@@ -137,7 +137,7 @@ var Aoe_Static = {
                         $('[aoe-static-id="' + id + '"]').html(response.blocks[id]);
                         // try to save in localStorage if allowed (f.e. not allowed in private mode on iOS)
                         try {
-                            localStorage.setItem('aoe_static_blocks_' + data.getBlocks[id], response.blocks[id]);
+                            localStorage.setItem('aoe_static_blocks_' + self.storeId + '_' + data.getBlocks[id], response.blocks[id]);
                         } catch (e) {
                         }
                     }
