@@ -74,10 +74,6 @@ class Aoe_Static_CallController extends Mage_Core_Controller_Front_Action
      */
     public function indexAction()
     {
-        if (!$this->getRequest()->isXmlHttpRequest()) {
-            return $this->_redirect('/');
-        }
-
         $response = array(
             'formKey' => Mage::getSingleton('core/session')->getFormKey()
         );
