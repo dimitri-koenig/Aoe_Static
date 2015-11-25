@@ -133,6 +133,11 @@ var Aoe_Static = {
                 Aoe_Static.ajaxHomeUrl,
                 data,
                 function (response) {
+                    if (response.redirect) {
+                        window.location.href = response.redirect;
+                        return;
+                    }
+
                     for (var id in response.blocks) {
                         $('[aoe-static-id="' + id + '"]').html(response.blocks[id]);
                         // try to save in localStorage if allowed (f.e. not allowed in private mode on iOS)
@@ -142,8 +147,8 @@ var Aoe_Static = {
                         }
                     }
 
-                    if (response['formKey']) {
-                        self.replaceFormKey(response['formKey']);
+                    if (response.formKey) {
+                        self.replaceFormKey(response.formKey);
                     }
 
                     jQuery('body').trigger('aoestatic_afterblockreplace', response);
