@@ -5,7 +5,7 @@
  */
 class Aoe_Static_Model_Cache_Adapter_Varnish implements Aoe_Static_Model_Cache_Adapter_Interface
 {
-    /** @var array  */
+    /** @var array */
     protected $_varnishServers = array();
 
     /**
@@ -37,6 +37,7 @@ class Aoe_Static_Model_Cache_Adapter_Varnish implements Aoe_Static_Model_Cache_A
      * Purge an array of urls on all varnish servers.
      *
      * @param array $urls
+     *
      * @return array with all errors
      */
     public function purge(array $urls)
@@ -44,8 +45,8 @@ class Aoe_Static_Model_Cache_Adapter_Varnish implements Aoe_Static_Model_Cache_A
         $errors = array();
 
         $regexPatterns = array();
-        foreach($urls as $k => $url) {
-            if(strpos($url, 'R:') === 0) {
+        foreach ($urls as $k => $url) {
+            if (strpos($url, 'R:') === 0) {
                 unset($urls[$k]);
                 $regexPatterns[] = substr($url, 2);
             }
@@ -66,18 +67,22 @@ class Aoe_Static_Model_Cache_Adapter_Varnish implements Aoe_Static_Model_Cache_A
                 curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, 0);
                 curl_setopt($curlHandler, CURLOPT_SSL_VERIFYHOST, 0);
+                curl_setopt($curlHandler, CURLOPT_TIMEOUT, 30);
+                curl_setopt($curlHandler, CURLOPT_CONNECTTIMEOUT, 30);
 
                 curl_multi_add_handle($multiHandler, $curlHandler);
                 $curlHandlers[] = $curlHandler;
             }
 
-            if(!empty($regexPatterns)) {
+            if (!empty($regexPatterns)) {
                 $curlHandler = curl_init();
                 curl_setopt($curlHandler, CURLOPT_URL, "http://" . $varnishServer);
                 curl_setopt($curlHandler, CURLOPT_CUSTOMREQUEST, 'BAN');
                 curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, 0);
                 curl_setopt($curlHandler, CURLOPT_SSL_VERIFYHOST, 0);
+                curl_setopt($curlHandler, CURLOPT_TIMEOUT, 30);
+                curl_setopt($curlHandler, CURLOPT_CONNECTTIMEOUT, 30);
                 curl_setopt($curlHandler, CURLOPT_HTTPHEADER, array('X-Url: ' . $regexPatterns));
 
                 curl_multi_add_handle($multiHandler, $curlHandler);
@@ -140,6 +145,8 @@ class Aoe_Static_Model_Cache_Adapter_Varnish implements Aoe_Static_Model_Cache_A
             curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, 0);
             curl_setopt($curlHandler, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($curlHandler, CURLOPT_TIMEOUT, 30);
+            curl_setopt($curlHandler, CURLOPT_CONNECTTIMEOUT, 30);
             curl_setopt($curlHandler, CURLOPT_HTTPHEADER, array('X-Tags: ' . $regex));
 
             curl_multi_add_handle($multiHandler, $curlHandler);
