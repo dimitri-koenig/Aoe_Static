@@ -20,7 +20,9 @@ var Aoe_Static = {
         this.ajaxHomeUrl = ajaxhome_url;
         this.currentProductId = currentproductid;
 
-        this.populatePage();
+        if (/bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent) === false) {
+            this.populatePage();
+        }
     },
 
     /**
