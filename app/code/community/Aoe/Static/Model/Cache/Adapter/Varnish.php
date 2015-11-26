@@ -125,6 +125,9 @@ class Aoe_Static_Model_Cache_Adapter_Varnish implements Aoe_Static_Model_Cache_A
         // Part delimiter
         $pd = str_replace(' ', '\x20', preg_quote(Aoe_Static_Model_Cache_Control::PART_DELIMITER));
 
+        // makes tag list unique
+        $tags = array_unique($tags);
+
         foreach ($tags as $k => $tag) {
             if (strpos($tag, 'R:') === 0) {
                 $tag = substr($tag, 2);
