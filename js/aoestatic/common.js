@@ -131,32 +131,34 @@ var Aoe_Static = {
             });
 
             // E.T. phone home, get blocks and pending flash-messages
-            $.get(
-                Aoe_Static.ajaxHomeUrl,
-                data,
-                function (response) {
-                    if (response.redirect) {
-                        window.location.href = response.redirect;
-                        return;
-                    }
-
-                    for (var id in response.blocks) {
-                        $('[aoe-static-id="' + id + '"]').html(response.blocks[id]);
-                        // try to save in localStorage if allowed (f.e. not allowed in private mode on iOS)
-                        try {
-                            localStorage.setItem('aoe_static_blocks_' + self.storeId + '_' + data.getBlocks[id], response.blocks[id]);
-                        } catch (e) {
+            if (data.currentProductId || counter > 0) {
+                $.get(
+                    Aoe_Static.ajaxHomeUrl,
+                    data,
+                    function (response) {
+                        if (response.redirect) {
+                            window.location.href = response.redirect;
+                            return;
                         }
-                    }
 
-                    if (response.formKey) {
-                        self.replaceFormKey(response.formKey);
-                    }
+                        for (var id in response.blocks) {
+                            $('[aoe-static-id="' + id + '"]').html(response.blocks[id]);
+                            // try to save in localStorage if allowed (f.e. not allowed in private mode on iOS)
+                            try {
+                                localStorage.setItem('aoe_static_blocks_' + self.storeId + '_' + data.getBlocks[id], response.blocks[id]);
+                            } catch (e) {
+                            }
+                        }
 
-                    jQuery('body').trigger('aoestatic_afterblockreplace', response);
-                },
-                'json'
-            );
+                        if (response.formKey) {
+                            self.replaceFormKey(response.formKey);
+                        }
+
+                        jQuery('body').trigger('aoestatic_afterblockreplace', response);
+                    },
+                    'json'
+                );
+            }
         });
     },
 
