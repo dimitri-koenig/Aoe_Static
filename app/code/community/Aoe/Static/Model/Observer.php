@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Observer model
  *
@@ -8,6 +9,7 @@ class Aoe_Static_Model_Observer
 {
     /**
      * Indicates, if there are messages to show on the current page
+     *
      * @var bool
      */
     protected $messagesToShow = false;
@@ -31,6 +33,7 @@ class Aoe_Static_Model_Observer
      * Set custom headers and cookies
      *
      * @param Varien_Event_Observer $observer
+     *
      * @return Aoe_Static_Model_Observer
      */
     public function processPostDispatch(Varien_Event_Observer $observer)
@@ -49,8 +52,8 @@ class Aoe_Static_Model_Observer
 
         // gather information for replace array
         $customerName = '';
-        $loggedIn     = '0';
-        $session      = Mage::getSingleton('customer/session');
+        $loggedIn = '0';
+        $session = Mage::getSingleton('customer/session');
         /* @var $session Mage_Customer_Model_Session */
         if ($session->isLoggedIn()) {
             $loggedIn     = '1';
@@ -79,9 +82,9 @@ class Aoe_Static_Model_Observer
             $conf = $this->_config->getActionConfiguration('uncached');
         }
 
-		$request = $controllerAction->getRequest();
-		// apply the configuration
-		if ($conf && $request->isDispatched()) {
+        $request = $controllerAction->getRequest();
+        // apply the configuration
+        if ($conf && $request->isDispatched()) {
             $this->applyConf($conf, $response);
         }
 
@@ -93,7 +96,7 @@ class Aoe_Static_Model_Observer
             $cacheControl->applyCacheHeaders();
         }
 
-        if(Mage::getStoreConfigFlag('dev/aoestatic/debug')) {
+        if (Mage::getStoreConfigFlag('dev/aoestatic/debug')) {
             $response->setHeader('X-Aoestatic-Debug', 'true');
         }
 
@@ -103,7 +106,7 @@ class Aoe_Static_Model_Observer
     /**
      * Apply configuration (set headers and cookies)
      *
-     * @param Mage_Core_Model_Config_Element $conf
+     * @param Mage_Core_Model_Config_Element     $conf
      * @param Mage_Core_Controller_Response_Http $response
      */
     protected function applyConf(Mage_Core_Model_Config_Element $conf, Mage_Core_Controller_Response_Http $response)
@@ -127,13 +130,13 @@ class Aoe_Static_Model_Observer
                 if (1 == $cookieConf->disabled) {
                     continue;
                 }
-                $scope    = $cookieConf->scope ? (string) $cookieConf->scope : 'customer';
-                $value    = (string) $cookieConf->value;
-                $value    = $cacheMarker->replaceMarkers($value);
-                $period   = $cookieConf->period ? (string) $cookieConf->period : null;
-                $path     = $cookieConf->path ? (string) $cookieConf->path : null;
-                $domain   = $cookieConf->domain ? (string) $cookieConf->domain : null;
-                $secure   = $cookieConf->secure ? filter_var($cookieConf->secure, FILTER_VALIDATE_BOOLEAN) : null;
+                $scope = $cookieConf->scope ? (string)$cookieConf->scope : 'customer';
+                $value = (string)$cookieConf->value;
+                $value = $cacheMarker->replaceMarkers($value);
+                $period = $cookieConf->period ? (string)$cookieConf->period : null;
+                $path = $cookieConf->path ? (string)$cookieConf->path : null;
+                $domain = $cookieConf->domain ? (string)$cookieConf->domain : null;
+                $secure = $cookieConf->secure ? filter_var($cookieConf->secure, FILTER_VALIDATE_BOOLEAN) : null;
                 $httponly = $cookieConf->httponly ? filter_var($cookieConf->httponly, FILTER_VALIDATE_BOOLEAN) : null;
 
                 $scopePart = '';
@@ -141,15 +144,15 @@ class Aoe_Static_Model_Observer
                     Mage::log("[AOE_Static::applyConf] Invalid scope '$scope'", Zend_Log::ERR);
                 } else {
                     if ($scope == 'customer') {
-                        $customerScope = (int) Mage::getStoreConfig('customer/account_share/scope');
+                        $customerScope = (int)Mage::getStoreConfig('customer/account_share/scope');
                         $scope = $customerScope == 0 ? 'global' : 'website';
                     }
                     if ($scope == 'global') {
                         $scopePart = 'g';
                     } elseif ($scope == 'website') {
-                        $scopePart = 'w'.Mage::app()->getWebsite()->getId();
+                        $scopePart = 'w' . Mage::app()->getWebsite()->getId();
                     } elseif ($scope == 'store') {
-                        $scopePart = 's'.Mage::app()->getStore()->getId();
+                        $scopePart = 's' . Mage::app()->getStore()->getId();
                     }
                 }
 
@@ -196,10 +199,15 @@ class Aoe_Static_Model_Observer
     {
         if (
             (false === $this->messagesToShow) &&
-            (Mage::app()->getLayout()->getMessagesBlock()->getMessageCollection() && Mage::app()->getLayout()->getMessagesBlock()->getMessageCollection()->count() > 0)
+            (Mage::app()->getLayout()->getMessagesBlock()->getMessageCollection() && Mage::app()
+                    ->getLayout()
+                    ->getMessagesBlock()
+                    ->getMessageCollection()
+                    ->count() > 0)
         ) {
             $this->messagesToShow = true;
         }
+
         return $this->messagesToShow;
     }
 
@@ -215,7 +223,8 @@ class Aoe_Static_Model_Observer
         if ($block instanceof Mage_Cms_Block_Block && $block->getBlock()) {
             Mage::getSingleton('aoestatic/cache_control')->addTag('block-' . $block->getBlock()->getId());
         } else if ($block instanceof Mage_Cms_Block_Page) {
-            Mage::getSingleton('aoestatic/cache_control')->addTag('page-' . ($block->getPageId() ?: ($block->getPage() ? $block->getPage()->getId() : Mage::getSingleton('cms/page')->getId())));
+            Mage::getSingleton('aoestatic/cache_control')->addTag('page-' . ($block->getPageId() ?: ($block->getPage() ? $block->getPage()
+                    ->getId() : Mage::getSingleton('cms/page')->getId())));
         } else if (($block instanceof Mage_Catalog_Block_Product_Abstract) && $block->getProductCollection()) {
             $tags = array();
             foreach ($block->getProductCollection()->getLoadedIds() as $id) {
@@ -268,6 +277,7 @@ class Aoe_Static_Model_Observer
      * @see Mage_Core_Model_Cache
      *
      * @param Mage_Core_Model_Observer $observer
+     *
      * @return Aoe_Static_Model_Observer
      */
     public function catalogCategorySaveCommitAfter($observer)
@@ -278,6 +288,7 @@ class Aoe_Static_Model_Observer
             // notify user that varnish needs to be refreshed
             Mage::app()->getCacheInstance()->invalidateType(array('aoestatic'));
         }
+
         return $this;
     }
 
@@ -289,22 +300,23 @@ class Aoe_Static_Model_Observer
      *
      * @param Varien_Event_Observer $observer
      */
-    public function productOutOfStock($observer) {
+    public function productOutOfStock($observer)
+    {
         /** @var $category Mage_CatalogInventory_Model_Stock_Item */
         $stockItem = $observer->getItem();
         $originalStockData = $stockItem->getOrigData('is_in_stock');
 
         if ((!is_null($originalStockData)
-            && $stockItem->getIsInStock() != $originalStockData
-            && $stockItem->getProductId() > 0)
-        || $stockItem->getStockStatusChangedAuto()
+                && $stockItem->getIsInStock() != $originalStockData
+                && $stockItem->getProductId() > 0)
+            || $stockItem->getStockStatusChangedAuto()
         ) {
             $tagsToPurge = array();
             /** @var $helper Aoe_Static_Helper_Data */
             $helper = Mage::helper('aoestatic');
             $tagsToPurge[] = 'product-' . $stockItem->getProductId();
             $categories = Mage::getModel('catalog/product')->setId($stockItem->getProductId())->getCategoryIds();
-            foreach($categories as $category) {
+            foreach ($categories as $category) {
                 $tagsToPurge[] = 'category-' . $category;
             }
             $helper->purgeTags($tagsToPurge);
@@ -316,6 +328,7 @@ class Aoe_Static_Model_Observer
      *
      * @param string $type    message type (error/success/notice)
      * @param string $message actual message
+     *
      * @return bool
      */
     protected function _addSessionMessage($type, $message)
@@ -331,6 +344,7 @@ class Aoe_Static_Model_Observer
         } else {
             Mage::getSingleton('adminhtml/session')->addNotice($message);
         }
+
         return true;
     }
 
@@ -338,6 +352,7 @@ class Aoe_Static_Model_Observer
      * Listens to application_clean_cache event and gets notified when a product/category/cms model is saved
      *
      * @param $observer Mage_Core_Model_Observer
+     *
      * @return Aoe_Static_Model_Observer
      */
     public function applicationCleanCache($observer)
@@ -355,7 +370,7 @@ class Aoe_Static_Model_Observer
         // check if we should process tags from product which has no relevant changes
         $skippableProductIds = Mage::registry(self::REGISTRY_SKIPPABLE_NAME);
         if (null !== $skippableProductIds) {
-            foreach ((array) $tags as $tag) {
+            foreach ((array)$tags as $tag) {
                 if (preg_match('/^catalog_product_(\d+)?/', $tag, $match)) {
                     if (isset($match[1]) && in_array($match[1], $skippableProductIds)) {
                         return $this;
@@ -369,7 +384,7 @@ class Aoe_Static_Model_Observer
             if (!empty($errors)) {
                 $this->_addSessionMessage('error', $helper->__("Static Purge failed"));
             } else {
-                $this->_addSessionMessage('success', $helper->__("Static Purge failed"));
+                $this->_addSessionMessage('success', $helper->__("Static Purge succeeded"));
             }
 
             return $this;
@@ -405,6 +420,7 @@ class Aoe_Static_Model_Observer
                 $this->_addSessionMessage('success', $helper->__("Tag purges have been submitted successfully:<br/>") . implode("<br />", $purgetags));
             }
         }
+
         return $this;
     }
 
@@ -435,7 +451,7 @@ class Aoe_Static_Model_Observer
         // apply default configuration first
         $conf = $this->_config->getActionConfiguration('default');
         if ($conf && isset($conf->handles) && $conf->handles instanceof Mage_Core_Model_Config_Element) {
-            foreach($conf->handles->children() as $handle => $node) {
+            foreach ($conf->handles->children() as $handle => $node) {
                 $enabled = !(isset($node['disabled']) && (bool)(string)$node['disabled']);
                 $handles[$handle] = $enabled;
             }
@@ -448,7 +464,7 @@ class Aoe_Static_Model_Observer
             $conf = $this->_config->getActionConfiguration('uncached');
         }
         if ($conf && isset($conf->handles) && $conf->handles instanceof Mage_Core_Model_Config_Element) {
-            foreach($conf->handles->children() as $handle => $node) {
+            foreach ($conf->handles->children() as $handle => $node) {
                 $enabled = !(isset($node['disabled']) && (bool)(string)$node['disabled']);
                 $handles[$handle] = $enabled;
             }
